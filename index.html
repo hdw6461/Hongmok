@@ -108,8 +108,9 @@
             <div class="flex flex-row justify-between items-center gap-2 relative z-10">
                 <div class="flex flex-col flex-1 min-w-0">
                     <div class="flex items-center gap-2 mb-0.5">
-                        <span id="contentTypeBadge" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider shadow-sm">PDF</span>
-                        <p id="displayDate" class="text-xs md:text-sm font-semibold text-blue-600 dark:text-blue-400"></p>
+                        <span id="contentTypeBadge" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider shadow-sm"></span>
+                        <span id="categoryBadge" class="hidden px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-800"></span>
+                        <p id="displayDate" class="text-xs md:text-sm font-semibold text-slate-500 dark:text-slate-400"></p>
                     </div>
                     <h2 id="currentTitle" class="text-lg md:text-xl font-bold tracking-tight truncate"></h2>
                 </div>
@@ -138,6 +139,10 @@
 
                 <!-- PDF 뷰어 -->
                 <div id="pdfSection" class="w-full h-full relative">
+                    <a id="pdfDirectLink" href="#" target="_blank" class="absolute bottom-6 right-6 z-50 bg-blue-600 text-white px-5 py-3 rounded-full shadow-xl text-sm font-bold hover:bg-blue-700 hover:scale-105 transition-all flex items-center gap-2">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>원본 파일 열기</span>
+                    </a>
                     <div id="loading" class="absolute inset-0 flex flex-col items-center justify-center z-0">
                         <div class="w-12 h-12 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
                         <p class="mt-4 text-sm font-medium text-slate-500">자료를 불러오고 있습니다...</p>
@@ -192,11 +197,8 @@
         /**
          * 1. 데이터 입력 (YYYYMMDD 형식)
          */
-        const rawData = [{
-            type: "text",
-            date: "20260501",
-            title: "하나님의 음성",
-            content: `청년 시절 Again 1907의 광풍 아래에서 살았다. 성령, 은사, 영적체험이 주요 이슈였다. 나 또한 구약성경에 나온 인물들처럼 하나님의 음성을 듣고 싶었다. 처음으로 충격받았던 책은 베니힌의 <안녕하세요 성령님>이었다. 진짜 성령과 대화를 한다고? 나 또한 자연스럽게 그런 분위기 속에서 은사를 구했다. 관련해서 처음 읽은 책은 조이 도우슨의 <하나님의 음성을 듣는 삶>이었을 것이다. 그와 유사한 책으로는 로렌 커닝햄의 <하나님, 정말 당신이십니까?>였던 것 같다. 두 책 모두 읽었다. 나는 그들의 친밀함이 부러웠다.
+        const rawData = [
+            { type: "text", date: "20260501", title: "하나님의 음성", content: `청년 시절 Again 1907의 광풍 아래에서 살았다. 성령, 은사, 영적체험이 주요 이슈였다. 나 또한 구약성경에 나온 인물들처럼 하나님의 음성을 듣고 싶었다. 처음으로 충격받았던 책은 베니힌의 <안녕하세요 성령님>이었다. 진짜 성령과 대화를 한다고? 나 또한 자연스럽게 그런 분위기 속에서 은사를 구했다. 관련해서 처음 읽은 책은 조이 도우슨의 <하나님의 음성을 듣는 삶>이었을 것이다. 그와 유사한 책으로는 로렌 커닝햄의 <하나님, 정말 당신이십니까?>였던 것 같다. 두 책 모두 읽었다. 나는 그들의 친밀함이 부러웠다.
 
 당시 군 인트라넷에 어떤 신앙 게시판이 있었던 것으로 기억한다. 그때 한 병사는 브래드 저삭의 <내 양은 내 음성을 듣는다>는 책을 추천했다. 물론 그 책은 읽지 않고 도서관에 신청만 넣어두었다. 다만 책 제목 자체만으로 무슨 의미인지 알 수 있었다. 그래서 하나님의 음성을 들을 수 있었냐고 묻는다면 비슷한 은사체험을 했다. 군 시절 뜨겁게 하루에 1-2시간 이상 기도하며 놀라운 신비체험을 했다. 당시 나는 ‘예언기도’와 유사한 것들을 경험했다. 어느 시점에 나는, 하나님의 음성을 듣기 원했던 시절의 체험을 자연스럽게 영유하고 있었다.
 
@@ -214,12 +216,8 @@
 
 하나님의 음성을 듣는 기술 자체가 틀린 것은 아니다. 반면 그런 유의 기술이 소비되는 기저에는, ‘하나님의 음성’을 듣고 나면 확신과 기쁨을 통해, 그리스 로마 철학자들이 말하는 ‘덕’ 혹은 부처가 말하는 ‘성불’에 준하는 상태에 이를 수 있다는 우리의 망상이 있다. 하지만 실제 그리스도인의 삶은 그렇지 않다. 나는 매번 그러했다. 매번 기도 중에 하나님의 뜻을 알아차리곤 했다. 하지만 알아차렸다고 해서 번민이 사라지진 않았다. 고민과 갈등은 계속되었다. 오히려 후일에야, 그때 그 뜻이 기억나고, 그 뜻을 통하여 내가 처한 상황이 이해되었다. 하나님은 나에게 늘 말씀하셨지만, 오히려 그 말씀은 나를 더욱 고민케 만들었다. 상황에 초월하는 평강을 주시는 말씀이 아니라, 상황에 더욱 몰입하여 고뇌와 갈등을 겪게 하고, 이를 후일 선해하는 말씀이었다.
 
-그러고보면 나는 여전히 씨름하고 고뇌하고 갈등하지만, 이는 하나님의 말씀을 듣지 않아 괴로워하는 류는 전혀 아니다. 오히려 내가 나아갈 방향이 무엇인지에 대해서는 아직 침묵하고 계시지만, 내가 앞으로 나아가기 위해서 견지해야 할 태도에 대해서는 끈질기게 말씀하시기에, 나는 이를 두고 씨름하고 고뇌하며 갈등한다. 그리스도인이 걸어야 할 길은, 부처의 길과도, 그리스 로마 철학자의 길과도 다르다. 그분의 말씀이 원체 신묘막측하시기에 그러하다.`
-        },{
-            type: "text",
-            date: "20260430",
-            title: "구속(Redemption)",
-            content: `첫 전임사역을 할 때부터 나는 많은 교역자들과 의견이 달랐다. 대부분의 사안에서 ‘엄격한 잣대’를 들이대는 것보다는 다소 ‘관대한 잣대’를 들이대곤 했다. 교회는 봐줘야 한다며. 물론 그렇다고 무조건 봐줘야 한다는 주장을 한 것은 아니었다. 엄격한 규정을 세우는 것은 따로 만들어가되, 그와 별개로 규정을 근거로 사람을 징계하거나 배제하는 일은 최대한 삼가야 한다고 주장했다. 그런 유의 이야기를 주고 받을 때마다 나는 소수자였다. 하여 나는 내가 가진 ‘관대한 잣대’가, 내가 가진 일종의 신학적 성향이 아닐까 생각했다. 근본주의 배경에서 보수적 신학을 터한 이들에 비해 난 다소 리버럴하니까. 하여 나는 리버럴해서 내가 관대하지 않을까 생각했다.
+그러고보면 나는 여전히 씨름하고 고뇌하고 갈등하지만, 이는 하나님의 말씀을 듣지 않아 괴로워하는 류는 전혀 아니다. 오히려 내가 나아갈 방향이 무엇인지에 대해서는 아직 침묵하고 계시지만, 내가 앞으로 나아가기 위해서 견지해야 할 태도에 대해서는 끈질기게 말씀하시기에, 나는 이를 두고 씨름하고 고뇌하며 갈등한다. 그리스도인이 걸어야 할 길은, 부처의 길과도, 그리스 로마 철학자의 길과도 다르다. 그분의 말씀이 원체 신묘막측하시기에 그러하다.` },
+            { type: "text", date: "20260430", title: "구속(Redemption)", content: `첫 전임사역을 할 때부터 나는 많은 교역자들과 의견이 달랐다. 대부분의 사안에서 ‘엄격한 잣대’를 들이대는 것보다는 다소 ‘관대한 잣대’를 들이대곤 했다. 교회는 봐줘야 한다며. 물론 그렇다고 무조건 봐줘야 한다는 주장을 한 것은 아니었다. 엄격한 규정을 세우는 것은 따로 만들어가되, 그와 별개로 규정을 근거로 사람을 징계하거나 배제하는 일은 최대한 삼가야 한다고 주장했다. 그런 유의 이야기를 주고 받을 때마다 나는 소수자였다. 하여 나는 내가 가진 ‘관대한 잣대’가, 내가 가진 일종의 신학적 성향이 아닐까 생각했다. 근본주의 배경에서 보수적 신학을 터한 이들에 비해 난 다소 리버럴하니까. 하여 나는 리버럴해서 내가 관대하지 않을까 생각했다.
 
 곱씹어보면 나의 관대함은 군 시절 경험했던 영적체험으로부터 비롯되었다. 군 시절 나는 모든 것을 잃은 상태였다. 연애하던 여자친구와도 헤어졌고, 내가 세워왔던 인생계획은 파산되었다. 남들보다 뒤늦게 입대한 군대에서 나는 허송세월을 하는 것처럼 느껴졌다. 하여 나는 군생활 내내 나를 다듬어달라고 울부짖었다. 군생활의 기간이 결코 헛되지 않은 시간이 되게 해달라고 기도했다. 그 시절 나는 내 안에 자격지심과 자기학대 성향으로 가득한 스스로를 발견했다. 나는 내게 일어난 모든 문제를 타인의 탓으로 돌리는 것에 전문가나 다름 없었다. 내 삶에 정적 몇 명만 없었다면 나는 연애에서 이별을 겪지 않았을 것이고, 내 삶에 정적 몇 명만 없었다면 나는 내가 받은 소명대로 신학교에 진학해있을 것이라, 그렇게 나는 믿고 있었다.
 
@@ -233,56 +231,19 @@
 
 누군가에게 ’구속‘이 무엇이냐고 묻는다면 나는 이와 같은 기나긴 서사를 들려주겠다. 나는 어떤 방식으로 구속되었는지 잘 모른다. 이를 관찰하면서 살아오지 않았다. 다만 어느 시점 돌이켜보니 나는 여타 다른 목사들에 비해 타인에 대해 관대한 태도를 갖고 있었다. 나는 그 사실로부터 끝없이 과거를 추적했다. 관대한 태도의 근원이 어디에 있는지 끈질기게 추적했다. 근원은 나의 기질 자체, 즉 하나님이 창조하신 본성 그 자체에 있었다. 누군가는 타인을 용납하기 위해 창조되며, 누군가는 질서를 세우기 위해 창조된다면, 나는 철저히 전자로 창조되었다. 하지만 여타 다른 이유로 말미암아 내 안의 내면은 온통 엉망진창이었다. 나는 나 자신을 싫어했고, 목회자로 사는 삶에서도 줄곧 인정을 받지 못하였고, 남자로 태어나 어떤 여성에게 깊은 사랑을 경험하지 못한채 완전히 망가지고 있었다. 하여 나의 관대한 기질은 꽃을 피우지 못하고 있었다.
 
-하지만 나의 삶에 이해할 수 없는 은총의 사건들이 몇 번 찾아왔다. 군시절, 그리고 전임사역 시절, 한 번은 과거의 늪으로부터 헤쳐나오기 위해 발버둥치던 삶에서 경험했던 영적 경험으로부터, 그리고 또 한 번은 운이 좋게도 다소 넓은 범위의 사람들에게서 일시적으로 깊은 사랑과 인정으로부터. 그런 사건은 내게 없던 본성을 새롭게 창조했던 것이 아니었다. 애초부터 근원적으로 타고 태어났던 본성을, 하지만 세파 속에서 완전히 망가진 본성을, 되살려주었다. 적어도 내가 목사로 지닌 ’관대함‘이란 속성은, 이처럼 세월 속에, 내 삶에 찾아오는 은혜 속에, 구속받은 결과물이다. 결코 내가 스스로 노력하여 개발한 결과물은 아니란 말이다.`
-        }, {
-            type: "pdf",
-            date: "20260503",
-            title: "[요나서]요나서의 역설 및 하나님의 인도하심",
-            url: "https://hdw6461.github.io/Hongmok/pdf/260503_The_Righteous_Compass.pdf"
-        },{
-            type: "pdf",
-            date: "20260104",
-            title: "[야곱]야곱과 비극",
-            url: "https://hdw6461.github.io/Hongmok/pdf/260104_The_Theology_of_Defeat.pdf"
-        },{
-            type: "pdf",
-            date: "20260111",
-            title: "[야곱]숙명과 섭리",
-            url: "https://hdw6461.github.io/Hongmok/pdf/260111_Fate_Becomes_Providence.pdf"
-        },{
-            type: "pdf",
-            date: "20260118",
-            title: "[야곱]당신은 당신이 누구인지 아십니까?",
-            url: "https://hdw6461.github.io/Hongmok/pdf/2260118_The_Mask_and_The_Name.pdf"
-        },{
-            type: "pdf",
-            date: "20260125",
-            title: "[야곱]되는 기도",
-            url: "https://hdw6461.github.io/Hongmok/pdf/260125_Becoming_Prayer.pdf"
-        },{
-            type: "pdf",
-            date: "20260301",
-            title: "[욥기]욥, 그리고 구속",
-            url: "https://hdw6461.github.io/Hongmok/pdf/260301_Time_Redeemed.pdf"
-        },{
-            type: "pdf",
-            date: "20260308",
-            title: "[욥기]티끌과 재의 아름다움",
-            url: "https://hdw6461.github.io/Hongmok/pdf/260308_The_Beauty_of_Dust.pdf"
-        },{
-            type: "pdf",
-            date: "20260315",
-            title: "[욥기]고통이 허용된 세계",
-            url: "https://hdw6461.github.io/Hongmok/pdf/260315_Beyond_Perfect_Control.pdf"
-        },{
-            type: "pdf",
-            date: "20260322",
-            title: "[욥기]피조세계의 아름다움",
-            url: "https://hdw6461.github.io/Hongmok/pdf/260322_Beyond_Moral_Order.pdf"
-        }
-                        ];
+하지만 나의 삶에 이해할 수 없는 은총의 사건들이 몇 번 찾아왔다. 군시절, 그리고 전임사역 시절, 한 번은 과거의 늪으로부터 헤쳐나오기 위해 발버둥치던 삶에서 경험했던 영적 경험으로부터, 그리고 또 한 번은 운이 좋게도 다소 넓은 범위의 사람들에게서 일시적으로 깊은 사랑과 인정으로부터. 그런 사건은 내게 없던 본성을 새롭게 창조했던 것이 아니었다. (즉 홀로 관대한 성품을 갖고자 애써서 획득한 결과물이 아니란 말이다.) 애초부터 근원적으로 타고 태어났던 본성을, 하지만 세파 속에서 완전히 망가진 본성을, 되살려주었다. 적어도 내가 목사로 지닌 ’관대함‘이란 속성은, 이처럼 세월 속에, 내 삶에 찾아오는 은혜 속에, 구속받은 결과물이다.` },
+            { type: "pdf", date: "20260503", title: "[요나서]요나서의 역설 및 하나님의 인도하심", url: "https://hdw6461.github.io/Hongmok/pdf/260503_The_Righteous_Compass.pdf" },
+            { type: "pdf", date: "20260104", title: "[야곱]야곱과 비극", url: "https://hdw6461.github.io/Hongmok/pdf/260104_The_Theology_of_Defeat.pdf" },
+            { type: "pdf", date: "20260111", title: "[야곱]숙명과 섭리", url: "https://hdw6461.github.io/Hongmok/pdf/260111_Fate_Becomes_Providence.pdf" },
+            { type: "pdf", date: "20260118", title: "[야곱]당신은 당신이 누구인지 아십니까?", url: "https://hdw6461.github.io/Hongmok/pdf/2260118_The_Mask_and_The_Name.pdf" },
+            { type: "pdf", date: "20260125", title: "[야곱]되는 기도", url: "https://hdw6461.github.io/Hongmok/pdf/260125_Becoming_Prayer.pdf" },
+            { type: "pdf", date: "20260301", title: "[욥기]욥, 그리고 구속", url: "https://hdw6461.github.io/Hongmok/pdf/260301_Time_Redeemed.pdf" },
+            { type: "pdf", date: "20260308", title: "[욥기]티끌과 재의 아름다움", url: "https://hdw6461.github.io/Hongmok/pdf/260308_The_Beauty_of_Dust.pdf" },
+            { type: "pdf", date: "20260315", title: "[욥기]고통이 허용된 세계", url: "https://hdw6461.github.io/Hongmok/pdf/260315_Beyond_Perfect_Control.pdf" },
+            { type: "pdf", date: "20260322", title: "[욥기]피조세계의 아름다움", url: "https://hdw6461.github.io/Hongmok/pdf/260322_Beyond_Moral_Order.pdf" }
+        ];
 
-        // 3. 최근 날짜부터 보이도록 자동 정렬 (내림차순)
+        // 정렬
         const sermonData = [...rawData].sort((a, b) => parseInt(b.date) - parseInt(a.date));
 
         let currentIndex = 0;
@@ -300,13 +261,22 @@
         const displayDate = document.getElementById('displayDate');
         const currentTitle = document.getElementById('currentTitle');
         const contentTypeBadge = document.getElementById('contentTypeBadge');
+        const categoryBadge = document.getElementById('categoryBadge');
         const pageIndicator = document.getElementById('pageIndicator');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const listDrawer = document.getElementById('listDrawer');
         const indexList = document.getElementById('indexList');
 
-        // 2. 날짜 표기 변환 함수 (YYYYMMDD -> 0000년 00월 00일)
+        // 헬퍼: 제목과 카테고리 분리
+        function parseTitle(fullTitle) {
+            const match = fullTitle.match(/^\[(.*?)\](.*)$/);
+            if (match) {
+                return { category: match[1].trim(), title: match[2].trim() };
+            }
+            return { category: null, title: fullTitle };
+        }
+
         function formatDisplayDate(dateStr) {
             if (!dateStr || dateStr.length !== 8) return dateStr;
             const y = dateStr.substring(0, 4);
@@ -333,6 +303,7 @@
             indexList.innerHTML = '';
             sermonData.forEach((item, index) => {
                 const isActive = currentIndex === index;
+                const { category, title } = parseTitle(item.title);
                 const btn = document.createElement('button');
                 btn.className = `w-full text-left p-4 rounded-xl transition-all flex flex-col gap-1 border ${
                     isActive
@@ -341,11 +312,14 @@
                 }`;
 
                 btn.innerHTML = `
-                    <div class="flex justify-between items-center opacity-80">
-                        <span class="text-[10px] font-bold uppercase tracking-widest">${item.type === 'pdf' ? 'Sermon' : 'Essay'}</span>
+                    <div class="flex justify-between items-center opacity-80 mb-1">
+                        <div class="flex gap-1.5 items-center">
+                            <span class="text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded ${item.type === 'pdf' ? 'bg-rose-500/20 text-rose-600' : 'bg-emerald-500/20 text-emerald-600'} ${isActive ? 'bg-white/20 text-white' : ''}">${item.type === 'pdf' ? 'Sermon' : 'Essay'}</span>
+                            ${category ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 ${isActive ? 'bg-white/20 text-white' : ''}">${category}</span>` : ''}
+                        </div>
                         <span class="text-[10px]">${formatDisplayDate(item.date)}</span>
                     </div>
-                    <div class="font-bold text-sm truncate">${item.title}</div>
+                    <div class="font-bold text-sm truncate">${title}</div>
                 `;
 
                 btn.onclick = () => {
@@ -357,32 +331,32 @@
             });
         }
 
-        /**
-         * 텍스트 렌더링 함수: "-" 기호를 디자인된 구분선으로 변경
-         */
         function renderText(content) {
             return content.split('\n').map(line => {
                 const trimmed = line.trim();
-                // 하이픈 기호("-")만 있는 줄 처리 → 우아하고 세련된 구분선으로 변환
                 if (trimmed === '-') {
-                    return `
-                        <div class="py-14 flex items-center justify-center w-full max-w-[150px] mx-auto opacity-50 dark:opacity-40">
-                            <div class="h-[1px] flex-1 bg-slate-400 dark:bg-slate-500"></div>
-                            <div class="mx-4 w-1.5 h-1.5 rotate-45 bg-slate-400 dark:bg-slate-500"></div>
-                            <div class="h-[1px] flex-1 bg-slate-400 dark:bg-slate-500"></div>
-                        </div>
-                    `;
+                    return `<div class="py-14 flex items-center justify-center w-full max-w-[150px] mx-auto opacity-50"><div class="h-[1px] flex-1 bg-slate-400"></div><div class="mx-4 w-1.5 h-1.5 rotate-45 bg-slate-400"></div><div class="h-[1px] flex-1 bg-slate-400"></div></div>`;
                 }
-                // 일반 문단: CSS 변수를 활용하여 글자 크기/줄간격 변화에 유연하게 반응하도록 설정
                 return trimmed ? `<p class="text-justify break-keep transition-all duration-300" style="text-indent: var(--dynamic-indent); margin-bottom: var(--dynamic-spacing);">${trimmed}</p>` : '';
             }).join('');
         }
 
         function updateContent() {
             const current = sermonData[currentIndex];
+            const { category, title } = parseTitle(current.title);
+
+            // 헤더 정보 업데이트
             displayDate.textContent = formatDisplayDate(current.date);
-            currentTitle.textContent = current.title;
+            currentTitle.textContent = title;
             pageIndicator.textContent = `${currentIndex + 1} / ${sermonData.length}`;
+
+            // 카테고리 태그 처리
+            if (category) {
+                categoryBadge.textContent = category;
+                categoryBadge.classList.remove('hidden');
+            } else {
+                categoryBadge.classList.add('hidden');
+            }
 
             viewerContainer.classList.remove('animate-fade-in-up');
             void viewerContainer.offsetWidth;
@@ -395,14 +369,22 @@
                 contentTypeBadge.textContent = 'Sermon Note';
                 contentTypeBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500 text-white';
 
+                document.getElementById('pdfDirectLink').href = current.url;
                 loading.style.display = 'flex';
                 pdfFrame.style.opacity = '0';
-                pdfFrame.src = `https://docs.google.com/viewer?url=${encodeURIComponent(current.url)}&embedded=true`;
+                
+                const cacheBuster = new Date().getTime();
+                pdfFrame.src = `https://docs.google.com/gview?url=${encodeURIComponent(current.url + "?t=" + cacheBuster)}&embedded=true`;
 
                 pdfFrame.onload = () => {
                     loading.style.display = 'none';
                     pdfFrame.style.opacity = '1';
                 };
+
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                    pdfFrame.style.opacity = '1';
+                }, 5000);
             } else {
                 pdfSection.style.display = 'none';
                 textSection.style.display = 'block';
@@ -427,14 +409,9 @@
         function applyTextStyles() {
             textContent.style.fontSize = `${currentFontSize}rem`;
             textContent.style.lineHeight = `${currentLineHeight}`;
-            
-            // 글자 크기와 줄 간격 값에 연동되어 유연하게 변하는 들여쓰기 및 문단 간격 변수 세팅
             textContent.style.setProperty('--dynamic-indent', `${currentFontSize * 1.2}rem`);
             textContent.style.setProperty('--dynamic-spacing', `${currentLineHeight * 0.8}em`);
         }
-
-        prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; updateContent(); } });
-        nextBtn.addEventListener('click', () => { if (currentIndex < sermonData.length - 1) { currentIndex++; updateContent(); } });
 
         function setupTheme() {
             const saved = localStorage.getItem('theme') || 'light';
@@ -448,6 +425,9 @@
                 themeIcon.className = isDark ? 'fas fa-sun text-yellow-400' : 'fas fa-moon';
             });
         }
+
+        prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; updateContent(); } });
+        nextBtn.addEventListener('click', () => { if (currentIndex < sermonData.length - 1) { currentIndex++; updateContent(); } });
 
         window.onload = init;
     </script>
