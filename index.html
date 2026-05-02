@@ -73,11 +73,12 @@
             box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.3);
         }
 
+        /* PDF 및 프레임이 가로를 가득 채우도록 설정 */
         iframe {
             width: 100%;
             height: 100%;
             border: none;
-            border-radius: 0.75rem;
+            display: block;
         }
 
         /* 스크롤바 커스텀 */
@@ -104,8 +105,9 @@
         <!-- Header -->
         <header class="glass-card p-3 md:p-4 px-5 flex justify-between items-center">
             <div class="flex items-center gap-3 md:gap-4">
-                <div class="bg-gradient-to-tr from-blue-600 to-cyan-500 text-white p-2.5 rounded-xl shadow-lg shadow-blue-500/30 flex items-center justify-center">
-                    <i class="fas fa-book-open text-lg md:text-xl"></i>
+                <!-- 변경된 아이콘: 성경/목사 이미지에 어울리는 fa-bible 아이콘 적용 -->
+                <div class="bg-gradient-to-tr from-blue-700 to-indigo-500 text-white p-2.5 rounded-xl shadow-lg shadow-blue-500/30 flex items-center justify-center">
+                    <i class="fas fa-bible text-xl md:text-2xl"></i>
                 </div>
                 <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">홍목의 방</h1>
             </div>
@@ -146,9 +148,9 @@
 
     <!-- [스크롤되는 본문 영역] Main Viewer Area -->
     <main class="flex-1 w-full px-4 pb-4 max-w-5xl mx-auto mt-2 min-h-0 relative">
-        <div id="viewerContainer" class="glass-card h-full flex flex-col p-1.5 md:p-2 relative overflow-hidden">
+        <div id="viewerContainer" class="glass-card h-full flex flex-col relative overflow-hidden">
             
-            <div class="relative w-full h-full overflow-hidden rounded-[10px] bg-slate-100 dark:bg-slate-900/50 shadow-inner">
+            <div class="relative w-full h-full overflow-hidden bg-slate-100 dark:bg-slate-900/50 shadow-inner">
                 
                 <!-- PDF Section -->
                 <div id="pdfSection" class="w-full h-full relative">
@@ -160,7 +162,8 @@
                         </div>
                         <p class="text-xs md:text-sm font-medium text-slate-500 dark:text-slate-400">자료를 불러오고 있습니다...</p>
                     </div>
-                    <iframe id="pdfFrame" class="relative z-10 transition-opacity duration-700 opacity-0 bg-white dark:bg-slate-800" src="" allow="autoplay"></iframe>
+                    <!-- PDF 가로 100% 출력 -->
+                    <iframe id="pdfFrame" class="relative z-10 transition-opacity duration-700 opacity-0 bg-white dark:bg-slate-800 w-full h-full" src="" allow="autoplay"></iframe>
                 </div>
 
                 <!-- Text Section -->
