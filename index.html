@@ -52,6 +52,7 @@
             color: var(--text-main);
             transition: background-color 0.4s ease, color 0.4s ease;
             overscroll-behavior: none;
+            -webkit-font-smoothing: antialiased;
         }
 
         .glass-card {
@@ -81,7 +82,23 @@
             display: none;
         }
         
-        /* 모바일 터치 영역 최적화 */
+        /* 텍스트 뷰어 커스텀 스타일: 모바일 가독성 핵심 */
+        .essay-content p {
+            text-align: left; /* 양쪽 정렬 대신 왼쪽 정렬로 띄어쓰기 가독성 확보 */
+            word-break: keep-all; /* 단어 단위로 줄바꿈 */
+            overflow-wrap: break-word;
+            text-indent: 1em; /* 문단 첫줄 들여쓰기 */
+            margin-bottom: 1.8em; /* 문단 간격 확보 */
+        }
+
+        @media (max-width: 640px) {
+            .essay-content p {
+                text-indent: 0.8em;
+                margin-bottom: 1.5em;
+                line-height: 1.85 !important;
+            }
+        }
+        
         button {
             touch-action: manipulation;
         }
@@ -114,13 +131,13 @@
             <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3 relative z-10">
                 <div class="flex flex-col flex-1 min-w-0">
                     <!-- 태그 그룹: Sermon/Essay + Category -->
-                    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap md:flex-nowrap">
+                    <div class="flex items-center gap-1.5 mb-1.5 flex-nowrap overflow-x-auto scrollbar-hide">
                         <span id="contentTypeBadge" class="whitespace-nowrap px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider shadow-sm"></span>
                         <span id="categoryBadge" class="hidden whitespace-nowrap px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800"></span>
                     </div>
                     <!-- 제목 -->
                     <h2 id="currentTitle" class="text-lg md:text-xl font-bold tracking-tight mb-1 leading-tight truncate md:whitespace-normal md:overflow-visible"></h2>
-                    <!-- 날짜 (제목 아래로 이동) -->
+                    <!-- 날짜 -->
                     <p id="displayDate" class="text-[11px] md:text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                         <i class="far fa-calendar-alt opacity-70"></i>
                         <span id="dateText"></span>
@@ -164,28 +181,28 @@
                     <iframe id="pdfFrame" class="relative z-10 transition-opacity duration-700 opacity-0" src=""></iframe>
                 </div>
 
-                <!-- 텍스트 뷰어 -->
-                <div id="textSection" class="hidden w-full h-full overflow-y-auto p-5 md:p-12 lg:p-20 bg-[#fdfbf7] dark:bg-[#121212] transition-colors relative">
+                <!-- 텍스트 뷰어 (개선됨) -->
+                <div id="textSection" class="hidden w-full h-full overflow-y-auto p-6 md:p-12 lg:p-20 bg-[#fdfbf7] dark:bg-[#121212] transition-colors relative">
                     <article class="max-w-2xl mx-auto pb-32">
-                        <div id="textContent" class="font-serif text-slate-800 dark:text-slate-300"></div>
+                        <div id="textContent" class="essay-content font-serif text-slate-800 dark:text-slate-300"></div>
                     </article>
                 </div>
 
                 <!-- 텍스트 설정 컨트롤 -->
                 <div id="textControls" class="hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-40 p-1.5 px-4 md:px-6 flex items-center gap-4 md:gap-6 shadow-2xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-full border border-slate-200 dark:border-slate-700 animate-fade-in-up">
                     <div class="flex items-center gap-2 md:gap-3">
-                        <span class="text-[9px] font-bold text-slate-400 uppercase">크기</span>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">폰트</span>
                         <div class="flex gap-1 bg-slate-100 dark:bg-slate-900 p-0.5 rounded-full">
-                            <button onclick="changeTextStyles('font', -1)" class="w-7 h-7 flex items-center justify-center rounded-full bg-white dark:bg-slate-700 shadow-sm"><i class="fas fa-minus text-[9px]"></i></button>
-                            <button onclick="changeTextStyles('font', 1)" class="w-7 h-7 flex items-center justify-center rounded-full bg-white dark:bg-slate-700 shadow-sm"><i class="fas fa-plus text-[9px]"></i></button>
+                            <button onclick="changeTextStyles('font', -1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-white dark:bg-slate-700 shadow-sm active:scale-95 transition-transform"><i class="fas fa-minus text-[10px]"></i></button>
+                            <button onclick="changeTextStyles('font', 1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-white dark:bg-slate-700 shadow-sm active:scale-95 transition-transform"><i class="fas fa-plus text-[10px]"></i></button>
                         </div>
                     </div>
                     <div class="w-[1px] h-5 bg-slate-200 dark:bg-slate-700"></div>
                     <div class="flex items-center gap-2 md:gap-3">
-                        <span class="text-[9px] font-bold text-slate-400 uppercase">간격</span>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">간격</span>
                         <div class="flex gap-1 bg-slate-100 dark:bg-slate-900 p-0.5 rounded-full">
-                            <button onclick="changeTextStyles('line', -1)" class="w-7 h-7 flex items-center justify-center rounded-full bg-white dark:bg-slate-700 shadow-sm"><i class="fas fa-minus text-[9px]"></i></button>
-                            <button onclick="changeTextStyles('line', 1)" class="w-7 h-7 flex items-center justify-center rounded-full bg-white dark:bg-slate-700 shadow-sm"><i class="fas fa-plus text-[9px]"></i></button>
+                            <button onclick="changeTextStyles('line', -1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-white dark:bg-slate-700 shadow-sm active:scale-95 transition-transform"><i class="fas fa-minus text-[10px]"></i></button>
+                            <button onclick="changeTextStyles('line', 1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-white dark:bg-slate-700 shadow-sm active:scale-95 transition-transform"><i class="fas fa-plus text-[10px]"></i></button>
                         </div>
                     </div>
                 </div>
@@ -198,9 +215,7 @@
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
-                    <div id="indexList" class="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-hide">
-                        <!-- JS 렌더링 -->
-                    </div>
+                    <div id="indexList" class="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-hide"></div>
                 </div>
 
             </div>
@@ -243,7 +258,8 @@
 누군가에게 ’구속‘이 무엇이냐고 묻는다면 나는 이와 같은 기나긴 서사를 들려주겠다. 나는 어떤 방식으로 구속되었는지 잘 모른다. 이를 관찰하면서 살아오지 않았다. 다만 어느 시점 돌이켜보니 나는 여타 다른 목사들에 비해 타인에 대해 관대한 태도를 갖고 있었다. 나는 그 사실로부터 끝없이 과거를 추적했다. 관대한 태도의 근원이 어디에 있는지 끈질기게 추적했다. 근원은 나의 기질 자체, 즉 하나님이 창조하신 본성 그 자체에 있었다. 누군가는 타인을 용납하기 위해 창조되며, 누군가는 질서를 세우기 위해 창조된다면, 나는 철저히 전자로 창조되었다. 하지만 여타 다른 이유로 말미암아 내 안의 내면은 온통 엉망진창이었다. 나는 나 자신을 싫어했고, 목회자로 사는 삶에서도 줄곧 인정을 받지 못하였고, 남자로 태어나 어떤 여성에게 깊은 사랑을 경험하지 못한채 완전히 망가지고 있었다. 하여 나의 관대한 기질은 꽃을 피우지 못하고 있었다.
 
 하지만 나의 삶에 이해할 수 없는 은총의 사건들이 몇 번 찾아왔다. 군시절, 그리고 전임사역 시절, 한 번은 과거의 늪으로부터 헤쳐나오기 위해 발버둥치던 삶에서 경험했던 영적 경험으로부터, 그리고 또 한 번은 운이 좋게도 다소 넓은 범위의 사람들에게서 일시적으로 깊은 사랑과 인정으로부터. 그런 사건은 내게 없던 본성을 새롭게 창조했던 것이 아니었다. (즉 홀로 관대한 성품을 갖고자 애써서 획득한 결과물이 아니란 말이다.) 애초부터 근원적으로 타고 태어났던 본성을, 하지만 세파 속에서 완전히 망가진 본성을, 되살려주었다. 적어도 내가 목사로 지닌 ’관대함‘이란 속성은, 이처럼 세월 속에, 내 삶에 찾아오는 은혜 속에, 구속받은 결과물이다.` },
-                 { type: "pdf", date: "20260503", title: "[요나서]요나서의 역설 및 하나님의 인도하심", url: "https://hdw6461.github.io/Hongmok/pdf/260503_The_Righteous_Compass.pdf" },
+                 
+            { type: "pdf", date: "20260503", title: "[요나서]요나서의 역설 및 하나님의 인도하심", url: "https://hdw6461.github.io/Hongmok/pdf/260503_The_Righteous_Compass.pdf" },
             { type: "pdf", date: "20260104", title: "[야곱]야곱과 비극", url: "https://hdw6461.github.io/Hongmok/pdf/260104_The_Theology_of_Defeat.pdf" },
             { type: "pdf", date: "20260111", title: "[야곱]숙명과 섭리", url: "https://hdw6461.github.io/Hongmok/pdf/260111_Fate_Becomes_Providence.pdf" },
             { type: "pdf", date: "20260118", title: "[야곱]당신은 당신이 누구인지 아십니까?", url: "https://hdw6461.github.io/Hongmok/pdf/2260118_The_Mask_and_The_Name.pdf" },
@@ -341,9 +357,10 @@
             return content.split('\n').map(line => {
                 const trimmed = line.trim();
                 if (trimmed === '-') {
-                    return `<div class="py-10 flex items-center justify-center w-full max-w-[120px] mx-auto opacity-50"><div class="h-[1px] flex-1 bg-slate-400"></div><div class="mx-3 w-1 h-1 rotate-45 bg-slate-400"></div><div class="h-[1px] flex-1 bg-slate-400"></div></div>`;
+                    return `<div class="py-8 flex items-center justify-center w-full max-w-[80px] mx-auto opacity-30"><div class="h-[1px] flex-1 bg-slate-400"></div><div class="mx-2 w-1 h-1 rounded-full bg-slate-400"></div><div class="h-[1px] flex-1 bg-slate-400"></div></div>`;
                 }
-                return trimmed ? `<p class="text-justify break-keep transition-all duration-300" style="text-indent: var(--dynamic-indent); margin-bottom: var(--dynamic-spacing);">${trimmed}</p>` : '';
+                // 들여쓰기와 가독성 스타일은 CSS 클래스(.essay-content p)에서 제어
+                return trimmed ? `<p>${trimmed}</p>` : '';
             }).join('');
         }
 
@@ -371,7 +388,7 @@
                 textSection.style.display = 'none';
                 textControls.style.display = 'none';
                 contentTypeBadge.textContent = 'Sermon Note';
-                contentTypeBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500 text-white whitespace-nowrap';
+                contentTypeBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500 text-white whitespace-nowrap shadow-sm';
 
                 document.getElementById('pdfDirectLink').href = current.url;
                 loading.style.display = 'flex';
@@ -388,13 +405,13 @@
                 setTimeout(() => {
                     loading.style.display = 'none';
                     pdfFrame.style.opacity = '1';
-                }, 5000);
+                }, 8000);
             } else {
                 pdfSection.style.display = 'none';
                 textSection.style.display = 'block';
                 textControls.style.display = 'flex';
                 contentTypeBadge.textContent = 'Essays';
-                contentTypeBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white whitespace-nowrap';
+                contentTypeBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white whitespace-nowrap shadow-sm';
 
                 textContent.innerHTML = renderText(current.content);
                 textSection.scrollTop = 0;
@@ -405,16 +422,14 @@
         }
 
         function changeTextStyles(type, dir) {
-            if (type === 'font') currentFontSize = Math.max(0.9, Math.min(currentFontSize + dir * 0.1, 2.0));
-            else currentLineHeight = Math.max(1.4, Math.min(currentLineHeight + dir * 0.1, 2.8));
+            if (type === 'font') currentFontSize = Math.max(0.9, Math.min(currentFontSize + dir * 0.05, 1.8));
+            else currentLineHeight = Math.max(1.5, Math.min(currentLineHeight + dir * 0.1, 2.8));
             applyTextStyles();
         }
 
         function applyTextStyles() {
             textContent.style.fontSize = `${currentFontSize}rem`;
             textContent.style.lineHeight = `${currentLineHeight}`;
-            textContent.style.setProperty('--dynamic-indent', `${currentFontSize * 1.2}rem`);
-            textContent.style.setProperty('--dynamic-spacing', `${currentLineHeight * 0.8}em`);
         }
 
         function setupTheme() {
