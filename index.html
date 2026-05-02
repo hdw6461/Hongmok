@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>홍목의 방 - 설교 및 에세이</title>
-    <!-- 폰트 로드 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
@@ -19,15 +18,6 @@
                     fontFamily: {
                         sans: ['Pretendard', '-apple-system', 'sans-serif'],
                         serif: ['"Noto Serif KR"', 'serif'],
-                    },
-                    animation: {
-                        'fade-in-up': 'fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                    },
-                    keyframes: {
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(15px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        }
                     }
                 }
             }
@@ -36,195 +26,177 @@
 
     <style>
         :root {
-            --bg-body: #f1f5f9;
-            --card-bg: rgba(255, 255, 255, 0.85);
+            --bg-body: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
             --text-main: #1e293b;
+            --header-full: 140px;
+            --header-compact: 68px;
         }
 
         html.dark {
-            --bg-body: #020617;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --text-main: #f8fafc;
+            --bg-body: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.8);
+            --text-main: #f1f5f9;
         }
 
         body {
             background-color: var(--bg-body);
             color: var(--text-main);
-            transition: background-color 0.4s ease, color 0.4s ease;
-            overscroll-behavior: none;
+            transition: background-color 0.3s ease;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
-        .glass-card {
-            background-color: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 1rem;
-            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05);
+        /* PDF 모드일 때 바디 스크롤 방지 */
+        body.pdf-mode {
+            overflow: hidden;
+            height: 100vh;
         }
 
-        html.dark .glass-card {
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        #listDrawer {
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
-        
-        /* 텍스트 뷰어 커스텀 스타일: 모바일 가독성 핵심 */
+        /* 본문 가독성 설정 */
         .essay-content p {
-            text-align: left; /* 양쪽 정렬 대신 왼쪽 정렬로 띄어쓰기 가독성 확보 */
-            word-break: keep-all; /* 단어 단위로 줄바꿈 */
+            word-break: keep-all;
             overflow-wrap: break-word;
-            text-indent: 1em; /* 문단 첫줄 들여쓰기 */
-            margin-bottom: 1.8em; /* 문단 간격 확보 */
+            text-indent: 1em;
+            margin-bottom: 2em;
+            text-align: justify;
         }
 
         @media (max-width: 640px) {
             .essay-content p {
-                text-indent: 0.8em;
+                text-indent: 0.5em;
                 margin-bottom: 1.5em;
-                line-height: 1.85 !important;
+                line-height: 1.8 !important;
             }
         }
-        
-        button {
-            touch-action: manipulation;
+
+        /* 플로팅 컨트롤 바 */
+        .floating-controls {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            width: calc(100% - 32px);
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 100px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+        }
+
+        html.dark .floating-controls {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+        }
+
+        #listDrawer { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+        /* PDF 뷰어 높이 최적화 */
+        #pdfSection {
+            height: calc(100vh - var(--header-full));
+            transition: height 0.3s ease;
+        }
+        .scrolled #pdfSection {
+            height: calc(100vh - var(--header-compact));
         }
     </style>
 </head>
-<body class="h-[100dvh] flex flex-col bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-950 font-sans overflow-hidden">
+<body class="font-sans antialiased">
 
-    <!-- 고정 헤더 영역 -->
-    <div class="w-full px-4 pt-4 max-w-5xl mx-auto flex flex-col gap-2 flex-shrink-0 z-50">
-        <header class="glass-card p-3 md:p-4 px-4 flex justify-between items-center">
+    <!-- 고정 상단 헤더 -->
+    <header id="mainHeader" class="fixed top-0 left-0 w-full z-[80] bg-white/85 dark:bg-slate-950/85 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 transition-all duration-300">
+        <div class="max-w-4xl mx-auto px-4 md:px-8 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="bg-gradient-to-tr from-blue-700 to-indigo-500 text-white w-9 h-9 md:w-11 md:h-11 rounded-xl shadow-lg flex items-center justify-center">
-                    <i class="fas fa-bible text-lg md:text-xl"></i>
-                </div>
-                <h1 class="text-xl md:text-2xl font-extrabold tracking-tight">홍목의 방</h1>
+                <span class="text-xl font-serif font-bold text-slate-800 dark:text-slate-100 tracking-wide flex items-center gap-2">
+                    <i class="fas fa-feather-alt text-indigo-500"></i>홍목의 방
+                </span>
+                <div id="scrolledTitle" class="hidden opacity-0 translate-x-4 transition-all duration-500 text-slate-500 dark:text-slate-400 font-medium text-sm border-l border-slate-300 dark:border-slate-700 pl-3 truncate max-w-[150px] md:max-w-xs"></div>
             </div>
-
             <div class="flex items-center gap-2">
-                <button id="listToggle" class="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-sm border border-slate-200 dark:border-slate-600">
-                    <i class="fas fa-list-ul text-sm"></i>
-                </button>
-                <button id="themeToggle" class="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-inner">
+                <button id="themeToggle" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300">
                     <i id="themeIcon" class="fas fa-moon text-sm"></i>
                 </button>
-            </div>
-        </header>
-
-        <!-- 현재 정보 및 네비게이션 -->
-        <div class="glass-card p-4 md:px-5 relative overflow-hidden">
-            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3 relative z-10">
-                <div class="flex flex-col flex-1 min-w-0">
-                    <!-- 태그 그룹: Sermon/Essay + Category -->
-                    <div class="flex items-center gap-1.5 mb-1.5 flex-nowrap overflow-x-auto scrollbar-hide">
-                        <span id="contentTypeBadge" class="whitespace-nowrap px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider shadow-sm"></span>
-                        <span id="categoryBadge" class="hidden whitespace-nowrap px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800"></span>
-                    </div>
-                    <!-- 제목 -->
-                    <h2 id="currentTitle" class="text-lg md:text-xl font-bold tracking-tight mb-1 leading-tight truncate md:whitespace-normal md:overflow-visible"></h2>
-                    <!-- 날짜 -->
-                    <p id="displayDate" class="text-[11px] md:text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                        <i class="far fa-calendar-alt opacity-70"></i>
-                        <span id="dateText"></span>
-                    </p>
-                </div>
-
-                <div class="flex items-center justify-between md:justify-end gap-2 flex-shrink-0 pt-2 md:pt-0 border-t border-slate-200 dark:border-slate-800 md:border-none">
-                    <div class="flex items-center gap-1.5">
-                        <button id="prevBtn" class="w-10 h-10 md:w-auto md:px-4 md:py-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-blue-600 hover:text-white border border-slate-200 dark:border-slate-700 transition-all disabled:opacity-30">
-                            <i class="fas fa-chevron-left text-xs"></i>
-                            <span class="hidden md:inline ml-1.5 font-bold text-sm">이전</span>
-                        </button>
-                        <button id="nextBtn" class="w-10 h-10 md:w-auto md:px-4 md:py-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-blue-600 hover:text-white border border-slate-200 dark:border-slate-700 transition-all disabled:opacity-30">
-                            <span class="hidden md:inline mr-1.5 font-bold text-sm">다음</span>
-                            <i class="fas fa-chevron-right text-xs"></i>
-                        </button>
-                    </div>
-                    <div class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
-                        <span id="pageIndicator" class="font-bold text-[10px] md:text-xs tracking-widest opacity-60"></span>
-                    </div>
-                </div>
+                <button id="listToggle" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-200">
+                    <i class="fas fa-bars text-sm"></i>
+                </button>
             </div>
         </div>
+
+        <div id="headerInfo" class="max-w-4xl mx-auto px-4 md:px-8 pb-6 transition-all duration-400 transform origin-top overflow-hidden">
+            <div class="flex items-center gap-2 mb-3">
+                <span id="contentTypeBadge" class="text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full text-white shadow-sm"></span>
+                <span id="categoryBadge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700"></span>
+            </div>
+            <h2 id="currentTitle" class="text-2xl md:text-3xl font-serif font-bold leading-snug text-slate-900 dark:text-white mb-2"></h2>
+            <div class="flex items-center gap-3 mt-3 text-xs text-slate-500 dark:text-slate-400 font-medium font-sans">
+                <span id="dateText" class="flex items-center gap-1.5"><i class="far fa-calendar-alt"></i></span>
+                <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                <span id="pageIndicator" class="flex items-center gap-1 opacity-80 tracking-widest font-mono"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 본문 영역 -->
+    <main id="mainContent" class="pt-[var(--header-full)] transition-all duration-300">
+        <!-- PDF 섹션: 페이지 전체 스크롤을 막기 위해 높이를 동적으로 조절 -->
+        <div id="pdfSection" class="hidden w-full relative bg-slate-200 dark:bg-slate-800 overflow-hidden">
+            <div id="loading" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 z-10">
+                <div class="w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            <iframe id="pdfFrame" class="w-full h-full border-none opacity-0 transition-opacity duration-500"></iframe>
+            <a id="pdfDirectLink" href="#" target="_blank" class="absolute bottom-24 right-6 bg-indigo-600/90 backdrop-blur-sm text-white px-5 py-3 rounded-full shadow-xl font-bold text-xs hover:scale-105 transition-transform z-20 md:bottom-28">
+                <i class="fas fa-file-pdf mr-2"></i>원본 보기
+            </a>
+        </div>
+
+        <!-- 텍스트 섹션 -->
+        <article id="textSection" class="hidden max-w-4xl mx-auto px-4 md:px-12 lg:px-16 pt-12 pb-32 transition-all duration-500">
+            <div id="textContent" class="essay-content font-serif text-slate-800 dark:text-slate-200 leading-relaxed"></div>
+        </article>
+    </main>
+
+    <!-- 하단 통합 플로팅 컨트롤러 -->
+    <div class="floating-controls flex items-center justify-between px-2 py-2">
+        <button id="prevBtn" class="w-11 h-11 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 disabled:opacity-20">
+            <i class="fas fa-chevron-left text-sm"></i>
+        </button>
+
+        <div id="textControls" class="flex items-center gap-1 md:gap-4 bg-slate-100/50 dark:bg-slate-800/50 rounded-full px-2 py-1 transition-opacity duration-300">
+            <div class="flex items-center">
+                <button onclick="changeTextStyles('font', -1)" class="w-8 h-8 flex items-center justify-center text-xs text-slate-400 hover:text-indigo-500"><i class="fas fa-font scale-75"></i></button>
+                <span class="text-[9px] font-bold text-slate-300 px-1">SIZE</span>
+                <button onclick="changeTextStyles('font', 1)" class="w-8 h-8 flex items-center justify-center text-sm text-slate-400 hover:text-indigo-500"><i class="fas fa-font"></i></button>
+            </div>
+            <div class="w-px h-3 bg-slate-300 dark:bg-slate-700 mx-1"></div>
+            <div class="flex items-center">
+                <button onclick="changeTextStyles('line', -1)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-indigo-500"><i class="fas fa-minus text-[10px]"></i></button>
+                <span class="text-[9px] font-bold text-slate-300 px-1">GAP</span>
+                <button onclick="changeTextStyles('line', 1)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-indigo-500"><i class="fas fa-plus text-[10px]"></i></button>
+            </div>
+        </div>
+
+        <button id="nextBtn" class="w-11 h-11 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 disabled:opacity-20">
+            <i class="fas fa-chevron-right text-sm"></i>
+        </button>
     </div>
 
-    <!-- 메인 뷰어 영역 -->
-    <main class="flex-1 w-full px-4 pb-4 max-w-5xl mx-auto mt-2 min-h-0 relative">
-        <div id="viewerContainer" class="glass-card h-full flex flex-col relative overflow-hidden">
-            <div class="relative w-full h-full overflow-hidden bg-slate-100 dark:bg-slate-900/50">
-
-                <!-- PDF 뷰어 -->
-                <div id="pdfSection" class="w-full h-full relative">
-                    <a id="pdfDirectLink" href="#" target="_blank" class="absolute bottom-6 right-6 z-50 bg-blue-600 text-white px-5 py-3 rounded-full shadow-xl text-sm font-bold hover:bg-blue-700 hover:scale-105 transition-all flex items-center gap-2">
-                        <i class="fas fa-external-link-alt"></i>
-                        <span class="hidden sm:inline">원본 파일 열기</span>
-                    </a>
-                    <div id="loading" class="absolute inset-0 flex flex-col items-center justify-center z-0">
-                        <div class="w-10 h-10 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
-                        <p class="mt-4 text-[13px] font-medium text-slate-500">자료를 불러오고 있습니다...</p>
-                    </div>
-                    <iframe id="pdfFrame" class="relative z-10 transition-opacity duration-700 opacity-0" src=""></iframe>
-                </div>
-
-                <!-- 텍스트 뷰어 (개선됨) -->
-                <div id="textSection" class="hidden w-full h-full overflow-y-auto p-6 md:p-12 lg:p-20 bg-[#fdfbf7] dark:bg-[#121212] transition-colors relative">
-                    <article class="max-w-2xl mx-auto pb-32">
-                        <div id="textContent" class="essay-content font-serif text-slate-800 dark:text-slate-300"></div>
-                    </article>
-                </div>
-
-                <!-- 텍스트 설정 컨트롤 -->
-                <div id="textControls" class="hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-40 p-1.5 px-4 md:px-6 flex items-center gap-4 md:gap-6 shadow-2xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-full border border-slate-200 dark:border-slate-700 animate-fade-in-up">
-                    <div class="flex items-center gap-2 md:gap-3">
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">폰트</span>
-                        <div class="flex gap-1 bg-slate-100 dark:bg-slate-900 p-0.5 rounded-full">
-                            <button onclick="changeTextStyles('font', -1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-white dark:bg-slate-700 shadow-sm active:scale-95 transition-transform"><i class="fas fa-minus text-[10px]"></i></button>
-                            <button onclick="changeTextStyles('font', 1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-white dark:bg-slate-700 shadow-sm active:scale-95 transition-transform"><i class="fas fa-plus text-[10px]"></i></button>
-                        </div>
-                    </div>
-                    <div class="w-[1px] h-5 bg-slate-200 dark:bg-slate-700"></div>
-                    <div class="flex items-center gap-2 md:gap-3">
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">간격</span>
-                        <div class="flex gap-1 bg-slate-100 dark:bg-slate-900 p-0.5 rounded-full">
-                            <button onclick="changeTextStyles('line', -1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-white dark:bg-slate-700 shadow-sm active:scale-95 transition-transform"><i class="fas fa-minus text-[10px]"></i></button>
-                            <button onclick="changeTextStyles('line', 1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-white dark:bg-slate-700 shadow-sm active:scale-95 transition-transform"><i class="fas fa-plus text-[10px]"></i></button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 글 목록 드로어 -->
-                <div id="listDrawer" class="absolute top-0 right-0 w-full md:w-80 h-full z-[60] bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 translate-x-full shadow-2xl flex flex-col">
-                    <div class="p-4 flex justify-between items-center border-b border-slate-200 dark:border-slate-800">
-                        <h3 class="font-bold text-base"><i class="fas fa-history mr-2 text-blue-500"></i>글 히스토리</h3>
-                        <button id="closeList" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div id="indexList" class="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-hide"></div>
-                </div>
-
-            </div>
+    <!-- 인덱스 드로어 -->
+    <div id="listDrawer" class="fixed top-0 right-0 w-full md:w-80 h-full z-[100] bg-white dark:bg-slate-900 shadow-2xl translate-x-full flex flex-col border-l border-slate-200 dark:border-slate-800">
+        <div class="p-5 flex justify-between items-center border-b dark:border-slate-800">
+            <h3 class="font-bold tracking-tight">글 히스토리</h3>
+            <button id="closeList" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"><i class="fas fa-times"></i></button>
         </div>
-    </main>
+        <div id="indexList" class="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-hide"></div>
+    </div>
 
     <script>
         const rawData = [
-            { type: "text", date: "20260501", title: "하나님의 음성", content: `청년 시절 Again 1907의 광풍 아래에서 살았다. 성령, 은사, 영적체험이 주요 이슈였다. 나 또한 구약성경에 나온 인물들처럼 하나님의 음성을 듣고 싶었다. 처음으로 충격받았던 책은 베니힌의 <안녕하세요 성령님>이었다. 진짜 성령과 대화를 한다고? 나 또한 자연스럽게 그런 분위기 속에서 은사를 구했다. 관련해서 처음 읽은 책은 조이 도우슨의 <하나님의 음성을 듣는 삶>이었을 것이다. 그와 유사한 책으로는 로렌 커닝햄의 <하나님, 정말 당신이십니까?>였던 것 같다. 두 책 모두 읽었다. 나는 그들의 친밀함이 부러웠다.
+             { type: "text", date: "20260501", title: "하나님의 음성", content: `청년 시절 Again 1907의 광풍 아래에서 살았다. 성령, 은사, 영적체험이 주요 이슈였다. 나 또한 구약성경에 나온 인물들처럼 하나님의 음성을 듣고 싶었다. 처음으로 충격받았던 책은 베니힌의 <안녕하세요 성령님>이었다. 진짜 성령과 대화를 한다고? 나 또한 자연스럽게 그런 분위기 속에서 은사를 구했다. 관련해서 처음 읽은 책은 조이 도우슨의 <하나님의 음성을 듣는 삶>이었을 것이다. 그와 유사한 책으로는 로렌 커닝햄의 <하나님, 정말 당신이십니까?>였던 것 같다. 두 책 모두 읽었다. 나는 그들의 친밀함이 부러웠다.
 
 당시 군 인트라넷에 어떤 신앙 게시판이 있었던 것으로 기억한다. 그때 한 병사는 브래드 저삭의 <내 양은 내 음성을 듣는다>는 책을 추천했다. 물론 그 책은 읽지 않고 도서관에 신청만 넣어두었다. 다만 책 제목 자체만으로 무슨 의미인지 알 수 있었다. 그래서 하나님의 음성을 들을 수 있었냐고 묻는다면 비슷한 은사체험을 했다. 군 시절 뜨겁게 하루에 1-2시간 이상 기도하며 놀라운 신비체험을 했다. 당시 나는 ‘예언기도’와 유사한 것들을 경험했다. 어느 시점에 나는, 하나님의 음성을 듣기 원했던 시절의 체험을 자연스럽게 영유하고 있었다.
 
@@ -268,30 +240,45 @@
             { type: "pdf", date: "20260308", title: "[욥기]티끌과 재의 아름다움", url: "https://hdw6461.github.io/Hongmok/pdf/260308_The_Beauty_of_Dust.pdf" },
             { type: "pdf", date: "20260315", title: "[욥기]고통이 허용된 세계", url: "https://hdw6461.github.io/Hongmok/pdf/260315_Beyond_Perfect_Control.pdf" },
             { type: "pdf", date: "20260322", title: "[욥기]피조세계의 아름다움", url: "https://hdw6461.github.io/Hongmok/pdf/260322_Beyond_Moral_Order.pdf" }
-        ];
+ 
+         ];
 
         const sermonData = [...rawData].sort((a, b) => parseInt(b.date) - parseInt(a.date));
-
         let currentIndex = 0;
         let currentFontSize = 1.15;
         let currentLineHeight = 1.9;
 
-        const viewerContainer = document.getElementById('viewerContainer');
-        const pdfSection = document.getElementById('pdfSection');
-        const textSection = document.getElementById('textSection');
-        const pdfFrame = document.getElementById('pdfFrame');
-        const textContent = document.getElementById('textContent');
-        const textControls = document.getElementById('textControls');
-        const loading = document.getElementById('loading');
-        const dateText = document.getElementById('dateText');
-        const currentTitle = document.getElementById('currentTitle');
-        const contentTypeBadge = document.getElementById('contentTypeBadge');
-        const categoryBadge = document.getElementById('categoryBadge');
-        const pageIndicator = document.getElementById('pageIndicator');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const listDrawer = document.getElementById('listDrawer');
-        const indexList = document.getElementById('indexList');
+        // 헤더 및 뷰어 크기 제어
+        window.addEventListener('scroll', () => {
+            const body = document.body;
+            const header = document.getElementById('mainHeader');
+            const info = document.getElementById('headerInfo');
+            const scrolledTitle = document.getElementById('scrolledTitle');
+            const isScrolled = window.scrollY > 50;
+
+            if (isScrolled) {
+                body.classList.add('scrolled');
+                header.classList.add('shadow-md');
+                info.style.maxHeight = '0px';
+                info.style.opacity = '0';
+                info.style.paddingBottom = '0px';
+                info.style.marginBottom = '0px';
+                
+                scrolledTitle.classList.remove('hidden');
+                setTimeout(() => { scrolledTitle.style.opacity = '1'; scrolledTitle.style.transform = 'translateX(0)'; }, 50);
+            } else {
+                body.classList.remove('scrolled');
+                header.classList.remove('shadow-md');
+                info.style.maxHeight = '300px';
+                info.style.opacity = '1';
+                info.style.paddingBottom = '1.5rem';
+                info.style.marginBottom = '0px';
+                
+                scrolledTitle.style.opacity = '0';
+                scrolledTitle.style.transform = 'translateX(10px)';
+                setTimeout(() => { if(window.scrollY <= 50) scrolledTitle.classList.add('hidden'); }, 300);
+            }
+        });
 
         function parseTitle(fullTitle) {
             const match = fullTitle.match(/^\[(.*?)\](.*)$/);
@@ -300,11 +287,7 @@
         }
 
         function formatDisplayDate(dateStr) {
-            if (!dateStr || dateStr.length !== 8) return dateStr;
-            const y = dateStr.substring(0, 4);
-            const m = dateStr.substring(4, 6);
-            const d = dateStr.substring(6, 8);
-            return `${y}년 ${m}월 ${d}일`;
+            return `${dateStr.substring(0,4)}.${dateStr.substring(4,6)}.${dateStr.substring(6,8)}`;
         }
 
         function init() {
@@ -314,139 +297,125 @@
 
             document.getElementById('listToggle').addEventListener('click', () => {
                 renderIndexList();
-                listDrawer.style.transform = 'translateX(0)';
+                document.getElementById('listDrawer').style.transform = 'translateX(0)';
             });
             document.getElementById('closeList').addEventListener('click', () => {
-                listDrawer.style.transform = 'translateX(100%)';
+                document.getElementById('listDrawer').style.transform = 'translateX(100%)';
             });
-        }
-
-        function renderIndexList() {
-            indexList.innerHTML = '';
-            sermonData.forEach((item, index) => {
-                const isActive = currentIndex === index;
-                const { category, title } = parseTitle(item.title);
-                const btn = document.createElement('button');
-                btn.className = `w-full text-left p-3.5 rounded-xl transition-all flex flex-col gap-1 border ${
-                    isActive
-                    ? 'bg-blue-600 text-white border-blue-400 shadow-lg'
-                    : 'bg-slate-50 dark:bg-slate-800/50 border-transparent hover:border-blue-500'
-                }`;
-
-                btn.innerHTML = `
-                    <div class="flex justify-between items-center opacity-80 mb-1">
-                        <div class="flex gap-1 items-center overflow-hidden">
-                            <span class="whitespace-nowrap text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded ${isActive ? 'bg-white/20 text-white' : (item.type === 'pdf' ? 'bg-rose-500/10 text-rose-600' : 'bg-emerald-500/10 text-emerald-600')}">${item.type === 'pdf' ? 'Sermon' : 'Essay'}</span>
-                            ${category ? `<span class="whitespace-nowrap text-[8px] font-bold px-1.5 py-0.5 rounded ${isActive ? 'bg-white/20 text-white' : 'bg-blue-500/10 text-blue-600'}">${category}</span>` : ''}
-                        </div>
-                        <span class="text-[9px] flex-shrink-0">${formatDisplayDate(item.date)}</span>
-                    </div>
-                    <div class="font-bold text-sm truncate">${title}</div>
-                `;
-
-                btn.onclick = () => {
-                    currentIndex = index;
-                    updateContent();
-                    listDrawer.style.transform = 'translateX(100%)';
-                };
-                indexList.appendChild(btn);
-            });
-        }
-
-        function renderText(content) {
-            return content.split('\n').map(line => {
-                const trimmed = line.trim();
-                if (trimmed === '-') {
-                    return `<div class="py-8 flex items-center justify-center w-full max-w-[80px] mx-auto opacity-30"><div class="h-[1px] flex-1 bg-slate-400"></div><div class="mx-2 w-1 h-1 rounded-full bg-slate-400"></div><div class="h-[1px] flex-1 bg-slate-400"></div></div>`;
-                }
-                // 들여쓰기와 가독성 스타일은 CSS 클래스(.essay-content p)에서 제어
-                return trimmed ? `<p>${trimmed}</p>` : '';
-            }).join('');
         }
 
         function updateContent() {
             const current = sermonData[currentIndex];
             const { category, title } = parseTitle(current.title);
 
-            dateText.textContent = formatDisplayDate(current.date);
-            currentTitle.textContent = title;
-            pageIndicator.textContent = `${currentIndex + 1} / ${sermonData.length}`;
+            document.getElementById('currentTitle').textContent = title;
+            document.getElementById('scrolledTitle').textContent = title;
+            document.getElementById('dateText').innerHTML = `<i class="far fa-calendar mr-1"></i>${formatDisplayDate(current.date)}`;
+            document.getElementById('pageIndicator').textContent = `${currentIndex + 1} / ${sermonData.length}`;
 
-            if (category) {
-                categoryBadge.textContent = category;
-                categoryBadge.classList.remove('hidden');
-            } else {
-                categoryBadge.classList.add('hidden');
-            }
+            const catBadge = document.getElementById('categoryBadge');
+            if (category) { catBadge.textContent = category; catBadge.classList.remove('hidden'); }
+            else { catBadge.classList.add('hidden'); }
 
-            viewerContainer.classList.remove('animate-fade-in-up');
-            void viewerContainer.offsetWidth;
-            viewerContainer.classList.add('animate-fade-in-up');
+            const typeBadge = document.getElementById('contentTypeBadge');
+            const mainContent = document.getElementById('mainContent');
+            const pdfSection = document.getElementById('pdfSection');
+            const textSection = document.getElementById('textSection');
+            const textControls = document.getElementById('textControls');
 
             if (current.type === 'pdf') {
-                pdfSection.style.display = 'block';
-                textSection.style.display = 'none';
-                textControls.style.display = 'none';
-                contentTypeBadge.textContent = 'Sermon Note';
-                contentTypeBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500 text-white whitespace-nowrap shadow-sm';
-
-                document.getElementById('pdfDirectLink').href = current.url;
-                loading.style.display = 'flex';
-                pdfFrame.style.opacity = '0';
+                // PDF 모드: 바디 스크롤 차단 및 헤더 높이에 맞춘 뷰어 노출
+                document.body.classList.add('pdf-mode');
+                typeBadge.textContent = 'Sermon';
+                typeBadge.className = "text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full shadow-sm bg-rose-500 text-white";
                 
-                const cacheBuster = new Date().getTime();
-                pdfFrame.src = `https://docs.google.com/gview?url=${encodeURIComponent(current.url + "?t=" + cacheBuster)}&embedded=true`;
-
-                pdfFrame.onload = () => {
-                    loading.style.display = 'none';
-                    pdfFrame.style.opacity = '1';
+                pdfSection.classList.remove('hidden');
+                textSection.classList.add('hidden');
+                textControls.classList.add('opacity-0', 'pointer-events-none');
+                
+                document.getElementById('loading').style.display = 'flex';
+                document.getElementById('pdfFrame').style.opacity = '0';
+                document.getElementById('pdfFrame').src = `https://docs.google.com/gview?url=${encodeURIComponent(current.url)}&embedded=true`;
+                
+                document.getElementById('pdfFrame').onload = () => {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('pdfFrame').style.opacity = '1';
                 };
-
-                setTimeout(() => {
-                    loading.style.display = 'none';
-                    pdfFrame.style.opacity = '1';
-                }, 8000);
+                document.getElementById('pdfDirectLink').href = current.url;
+                
+                // PDF 모드에서는 강제로 최상단으로 이동 (헤더 크기 복원)
+                window.scrollTo(0, 0);
             } else {
-                pdfSection.style.display = 'none';
-                textSection.style.display = 'block';
-                textControls.style.display = 'flex';
-                contentTypeBadge.textContent = 'Essays';
-                contentTypeBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white whitespace-nowrap shadow-sm';
-
-                textContent.innerHTML = renderText(current.content);
-                textSection.scrollTop = 0;
+                // 텍스트 모드: 일반적인 스크롤링 페이지
+                document.body.classList.remove('pdf-mode');
+                typeBadge.textContent = 'Essay';
+                typeBadge.className = "text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full shadow-sm bg-emerald-500 text-white";
+                
+                pdfSection.classList.add('hidden');
+                textSection.classList.remove('hidden');
+                textControls.classList.remove('opacity-0', 'pointer-events-none');
+                
+                // 단일 '-' 기호를 예쁜 줄바꿈/구분선으로 변환하여 렌더링
+                document.getElementById('textContent').innerHTML = current.content.split('\n').map(l => {
+                    const trimmed = l.trim();
+                    if (trimmed === '-') {
+                        return `<div class="flex justify-center items-center my-12 gap-3 text-slate-300 dark:text-slate-600">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current opacity-60"></span>
+                                    <span class="w-2 h-2 rounded-full bg-current opacity-80"></span>
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current opacity-60"></span>
+                                </div>`;
+                    }
+                    return trimmed ? `<p>${trimmed}</p>` : '';
+                }).join('');
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
-            prevBtn.disabled = currentIndex === 0;
-            nextBtn.disabled = currentIndex === sermonData.length - 1;
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === sermonData.length - 1;
+        }
+
+        function renderIndexList() {
+            const list = document.getElementById('indexList');
+            list.innerHTML = '';
+            sermonData.forEach((item, index) => {
+                const active = currentIndex === index;
+                const div = document.createElement('div');
+                div.className = `p-4 rounded-xl cursor-pointer transition-all border ${active ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-200 dark:shadow-none' : 'bg-slate-50 dark:bg-slate-800 border-transparent hover:border-indigo-400'}`;
+                div.innerHTML = `
+                    <div class="text-[8px] font-bold uppercase tracking-widest opacity-60 mb-1">${item.type} | ${formatDisplayDate(item.date)}</div>
+                    <div class="text-sm font-bold truncate">${item.title}</div>
+                `;
+                div.onclick = () => { currentIndex = index; updateContent(); document.getElementById('closeList').click(); };
+                list.appendChild(div);
+            });
         }
 
         function changeTextStyles(type, dir) {
-            if (type === 'font') currentFontSize = Math.max(0.9, Math.min(currentFontSize + dir * 0.05, 1.8));
-            else currentLineHeight = Math.max(1.5, Math.min(currentLineHeight + dir * 0.1, 2.8));
+            if (type === 'font') currentFontSize = Math.max(0.8, Math.min(currentFontSize + dir * 0.05, 1.5));
+            else currentLineHeight = Math.max(1.4, Math.min(currentLineHeight + dir * 0.1, 2.5));
             applyTextStyles();
         }
 
         function applyTextStyles() {
-            textContent.style.fontSize = `${currentFontSize}rem`;
-            textContent.style.lineHeight = `${currentLineHeight}`;
+            const content = document.getElementById('textContent');
+            content.style.fontSize = `${currentFontSize}rem`;
+            content.style.lineHeight = `${currentLineHeight}`;
         }
 
         function setupTheme() {
             const saved = localStorage.getItem('theme') || 'light';
             if (saved === 'dark') document.documentElement.classList.add('dark');
-            const themeIcon = document.getElementById('themeIcon');
-            themeIcon.className = saved === 'dark' ? 'fas fa-sun text-yellow-400' : 'fas fa-moon';
-
-            document.getElementById('themeToggle').addEventListener('click', () => {
+            document.getElementById('themeIcon').className = saved === 'dark' ? 'fas fa-sun text-yellow-400' : 'fas fa-moon';
+            document.getElementById('themeToggle').onclick = () => {
                 const isDark = document.documentElement.classList.toggle('dark');
                 localStorage.setItem('theme', isDark ? 'dark' : 'light');
-                themeIcon.className = isDark ? 'fas fa-sun text-yellow-400' : 'fas fa-moon';
-            });
+                document.getElementById('themeIcon').className = isDark ? 'fas fa-sun text-yellow-400' : 'fas fa-moon';
+            };
         }
 
-        prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; updateContent(); } });
-        nextBtn.addEventListener('click', () => { if (currentIndex < sermonData.length - 1) { currentIndex++; updateContent(); } });
+        document.getElementById('prevBtn').onclick = () => { if(currentIndex > 0) { currentIndex--; updateContent(); } };
+        document.getElementById('nextBtn').onclick = () => { if(currentIndex < sermonData.length - 1) { currentIndex++; updateContent(); } };
 
         window.onload = init;
     </script>
